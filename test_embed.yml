@@ -1,4 +1,4 @@
-x-superset-image: &superset-image apachesuperset.docker.scarf.sh/apache/superset:${TAG:-latest-dev}
+# x-superset-image: &superset-image apachesuperset.docker.scarf.sh/apache/superset:${TAG:-latest-dev}
 x-superset-depends-on: &superset-depends-on
   - db
   - redis
@@ -48,8 +48,9 @@ services:
     depends_on: *superset-depends-on
     volumes: *superset-volumes
 
-  uperset-init:
-    image: *superset-image
+  superset-init:
+    build:
+      <<: *common-build
     container_name: superset_init
     command: ["/app/docker/docker-init.sh"]
     env_file: docker/.env-non-dev
@@ -60,7 +61,8 @@ services:
       disable: true
 
   superset-worker:
-    image: *superset-image
+    build:
+      <<: *common-build
     container_name: superset_worker
     command: ["/app/docker/docker-bootstrap.sh", "worker"]
     env_file: docker/.env-non-dev
@@ -76,7 +78,8 @@ services:
         ]
 
   superset-worker-beat:
-    image: *superset-image
+    build:
+      <<: *common-build
     container_name: superset_worker_beat
     command: ["/app/docker/docker-bootstrap.sh", "beat"]
     env_file: docker/.env-non-dev
