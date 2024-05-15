@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Embedded Iframe Example</title>
+    <script src="https://unpkg.com/@superset-ui/embedded-sdk"></script>
+    <link rel="stylesheet" href="App.css" />
+</head>
+
+<body>
+    <h1>Embedded Iframe Example</h1>
+    <p>This is an example HTML file with an embedded iframe.</p>
+    <div id="dashboard"></div> <!-- the element to diplay the superset embedded dashboard -->
+    <script>
+
+        async function fetchAccessToken() {
+            try {
+                const body = {
+                    username: "admin",
+                    password: "admin",
+                    provider: "db",
+                    refresh: true,
+                }
+
+                const response = await fetch(
+                    "http://localhost:8088/api/v1/security/login", //api endpoint for superset login
+                    {
+                        method: "POST",
+                        body: JSON.stringify(body),
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                    }
+                )
+
+                const jsonResponse = await response.json()
+                return jsonResponse?.access_token
+            } catch (e) {
+                console.error(error)
+            }
+        }
+
+        async function fetchGuestToken() {
+            const accessToken = await fetchAccessToken()
+            // console.log(accessToken);
+            try {
+                const body = {
+                    resources: [
+                        {
+                            type: "dashboard",
+                            id: "example-id-generated-code", // given by the Superset embedding UI
+                        },
+                    ],
+                    rls: [],
+                    user: {
+                        username: "guest", //your superset username
+                        first_name: "Guest", 
+                        last_name: "User", 
+                    },
+                }
+                const response = await fetch(
+                    "http://localhost:8088/api/v1/security/guest_token/", //superset api endpoint for guest token
+                    {
+                        method: "POST",
+                        body: JSON.stringify(body),
+                        headers: {
+                            "Content-Type": "application/json",
+                            Authorization: `Bearer ${accessToken}`,
+                        },
+                    }
+                )
+                const jsonResponse = await response.json()
+                // console.log(jsonResponse);
+                return jsonResponse?.token
+            } catch (error) {
+                console.error(error)
+            }
+        }
+      
+        supersetEmbeddedSdk.embedDashboard({
+            id: "example-id-generated-code", // given by the Superset embedding UI
+            supersetDomain: "http://localhost:8088", //your superset container endpoint
+            mountPoint: document.getElementById("dashboard"), // html element in which iframe render
+            fetchGuestToken: () => fetchGuestToken(),
+            dashboardUiConfig: {
+                hideTitle: true,
+                hideChartControls: true,
+                hideTab: true,
+            },
+        });
+    </script>
+</body>
+
+</html>
