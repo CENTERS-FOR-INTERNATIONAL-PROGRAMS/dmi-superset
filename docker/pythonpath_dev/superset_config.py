@@ -25,7 +25,8 @@ FEATURE_FLAGS = {
  "ENABLE_TEMPLATE_PROCESSING": True,
  "ENABLE_REACT_CRUD_VIEWS": True,
  "EMBEDDED_SUPERSET": True ,
- "ALLOW_ADHOC_SUBQUERY" : True # Allow custom sql metrics
+ "ALLOW_ADHOC_SUBQUERY" : True, #Allow custom sql metrics
+ "ENABLE_JAVASCRIPT_CONTROLS":True
 }
 
 PUBLIC_ROLE_LIKE = "Gamma"
