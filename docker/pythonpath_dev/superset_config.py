@@ -6,6 +6,7 @@ ROW_LIMIT = 5000
 SUPERSET_WEBSERVER_PORT = 8088
 # Your App secret key
 SECRET_KEY = '\2\mthisismyscretkey\1\2\a\b\y\h'
+# SQLALCHEMY_DATABASE_URI = 'postgresql://akm2251:Awesome2019#@host.docker.internal:1155/superset'
 SQLALCHEMY_DATABASE_URI = 'postgresql://superset:superset@host.docker.internal:1155/superset'
 
 # Flask-WTF flag for CSRF
